@@ -8,12 +8,12 @@ import re
 from app import *
 from model import *
 from datetime import datetime
-
+import random
 def find_inner_divs(element):
   for child in element.children:
       yield child
 
-def find_all_games(html_code):
+def find_all_games(html_code, is_cs):
     try:
         soup = BeautifulSoup(html_code, 'html.parser')
         
@@ -46,6 +46,7 @@ def find_all_games(html_code):
                             datee =  str(datetime.now().strftime("%d.%m.%Y")) if datee == "СЕГОДНЯ" else datee
                                 
                         except Exception as e:
+                            print(new)
                             print(1, e)
                             try:
                                 new = new.findChildren("div" , recursive=False)[2]
@@ -54,6 +55,7 @@ def find_all_games(html_code):
                                 datee =  str(datetime.now().strftime("%d.%m.%Y")) if datee == "СЕГОДНЯ" else datee
                                 
                             except Exception as e:
+                                print("1111", new)
                                 print(2, e)
                                 timee = "10:10"
                                 datee = "10.10.1010"
@@ -78,24 +80,64 @@ def find_all_games(html_code):
                 pass
         for key, values in dict_big.items():
             for value in values:
-                add_game(key, value[0], value[1], value[2], value[3], value[4], value[5])
+                add_game(key, value[0], value[1], value[2], value[3], value[4], value[5], is_cs)
         return dict_big
     except Exception as e:
         print(5, e)
         return None
 
+import asyncio
+from selenium import webdriver
 
-if __name__ == "__main__":
+async def open_url(driver, url, is_cs=False):
     try:
-        driver.get('https://betboom.ru/esport?pageRoute=timeline&type=upcoming&sportId=3')
+        await driver.get(url)
         html_code = driver.page_source 
         driver.switch_to.frame(0)
         while True:  
             time.sleep(10)
+            random_element = random.choice([1,2])
+            if random_element==1:
+                driver.execute_script("window.scrollTo(0, 0);")
+            else:
+                driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             html_code = driver.page_source
-            find_all_games(html_code)
-            
-            time.sleep(10)
+            find_all_games(html_code, is_cs)
+            time.sleep(200)
         # driver.quit()
     except Exception as e:
-        send_message_error_to_channel()
+        send_message_error_to_channel(url)
+
+async def main():
+    
+    # Создаем экземпляры драйвера Chrome
+    driver1 = webdriver.Chrome()
+    driver2 = webdriver.Chrome()
+
+    # Ссылки для открытия
+    url1 = 'https://betboom.ru/esport?pageRoute=timeline&type=upcoming&sportId=3'
+    url2 = 'https://betboom.ru/esport?pageRoute=timeline&type=upcoming&sportId=2'
+
+    # Запускаем асинхронное открытие ссылок
+    await asyncio.gather(
+        open_url(driver1, url1, url1[-1]=="3"),
+        open_url(driver2, url2, url2[-1]=="3")
+    )
+
+    
+    
+if __name__ == "__main__":
+    asyncio.run(main())
+    # try:
+    #     driver.get('https://betboom.ru/esport?pageRoute=timeline&type=upcoming&sportId=3')
+    #     html_code = driver.page_source 
+    #     driver.switch_to.frame(0)
+    #     while True:  
+    #         time.sleep(10)
+    #         html_code = driver.page_source
+    #         find_all_games(html_code)
+            
+    #         time.sleep(10)
+    #     # driver.quit()
+    # except Exception as e:
+    #     send_message_error_to_channel()
