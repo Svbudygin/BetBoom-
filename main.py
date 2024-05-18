@@ -9,6 +9,9 @@ from app import *
 from model import *
 from datetime import datetime
 import random
+import asyncio
+
+
 def find_inner_divs(element):
   for child in element.children:
       yield child
@@ -86,8 +89,7 @@ def find_all_games(html_code, is_cs):
         print(5, e)
         return None
 
-import asyncio
-from selenium import webdriver
+
 
 async def open_url(driver, url, is_cs=False):
     try:
