@@ -31,7 +31,7 @@ def game_exists(name, team_1, team_2, timee, datee):
     return existing_game is not None
 
 
-def add_game(name, team_1, team_2, coef_win_1, coef_win_2, timee, datee):
+def add_game(name, team_1, team_2, coef_win_1, coef_win_2, timee, datee, is_cs):
     if game_exists(name, team_1, team_2,timee, datee):
         return None
 
@@ -56,4 +56,5 @@ def add_game(name, team_1, team_2, coef_win_1, coef_win_2, timee, datee):
         "coef_win_2": coef_win_2,
         "timee": timee,
         "datee": datee,
+        "is_cs": is_cs
     })
