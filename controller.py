@@ -12,5 +12,6 @@ from selenium.webdriver.chrome.service import Service
 
 
 service = Service(executable_path='/Users/sergeybudygin/bet_boom_parser/chromedriver')
-driver = webdriver.Chrome(service=service)
-driver.get("https://www.google.com")
+driver1 = webdriver.Chrome(service=service)
+driver2 = webdriver.Chrome(service=service)
+# driver.get("https://www.google.com")

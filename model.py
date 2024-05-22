@@ -15,12 +15,13 @@ class Game_DB(Base):
     team_2 = Column(String(200))
     coef_win_1 = Column(Float, nullable=False)
     coef_win_2= Column(Float, nullable=False)
+    draw = Column(String(200))
     timee = Column(String(200))
     datee = Column(String(200))
-    # coef_draw = Column(Float, nullable=False)
+    coef_draw = Column(Float, nullable=False)
     start = Column(DateTime)
-Base.metadata.drop_all(engine)
-Base.metadata.create_all(engine)
+# Base.metadata.drop_all(engine)
+# Base.metadata.create_all(engine)
 
 def __make_session():
     return sessionmaker(engine)()
@@ -31,7 +32,7 @@ def game_exists(name, team_1, team_2, timee, datee):
     return existing_game is not None
 
 
-def add_game(name, team_1, team_2, coef_win_1, coef_win_2, timee, datee, is_cs):
+def add_game(name, team_1, team_2, coef_win_1, coef_win_2, timee, datee,draw,coef_draw,   is_cs):
     if game_exists(name, team_1, team_2,timee, datee):
         return None
 
@@ -42,7 +43,9 @@ def add_game(name, team_1, team_2, coef_win_1, coef_win_2, timee, datee, is_cs):
         team_2=team_2, 
         coef_win_1=float(coef_win_1) if coef_win_1 else 0,
         coef_win_2=float(coef_win_2) if coef_win_2 else 0,
+        coef_draw = coef_draw,
         timee = timee,
+        draw = draw,
         datee = datee,
         start=datetime.datetime.now()
     )
@@ -55,6 +58,8 @@ def add_game(name, team_1, team_2, coef_win_1, coef_win_2, timee, datee, is_cs):
         "coef_win_1": coef_win_1,
         "coef_win_2": coef_win_2,
         "timee": timee,
+        "draw": draw,
+        "coef_draw": coef_draw,
         "datee": datee,
         "is_cs": is_cs
     })
